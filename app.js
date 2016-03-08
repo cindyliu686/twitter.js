@@ -1,34 +1,30 @@
+
+var swig = require('swig');
 var express = require('express');
 var app = express();
 
 
-app.use(function(req,res,next){
-	console.log(req.method,req.path);
+var routes = require('./routes/');
+app.use(function(request, res, next) {
+	console.log(request.url);
 	next();
 })
 
-app.use('/special/', function(req,res,next){
-	console.log("you reached the special area");	
-	next();
-	console.log(res.statusProperty);
-})
+app.use('/', routes);
 
-app.get('/special',function(req,res){
-	res.statusProperty = res.statusCode;
-	res.send('special');
-})
+app.use(express.static('public'))
 
-app.get('/news',function(req,res){
-	res.send('here is the news page');
-})
 
-app.get('/is-anybody-in-there',function(req,res){
-	res.send('here is is-anybody-in-there page');
-})
+app.engine('html', swig.renderFile);
+
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+app.set('view cache', false);
+swig.setDefaults({ cache: false });
 
 
 
-// app.post()
+
 
 app.listen(3000,function(){
 	console.log('app listening on port 3000;')
